@@ -56,7 +56,7 @@
         <div class="container-fluid mt-5 py-5 ">
           <h3>Products</h3>
           <hr class="">
-          <p>New and latest products</p>
+          <p>Hot and latest products</p>
         </div>
 
         <div class="row mx-auto container-fluid">  

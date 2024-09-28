@@ -68,7 +68,7 @@ if(isset($_GET['product_id'])){
 
                 <div class="single col-lg-6 col-md-6 col-6">
                     <h3 class="py-2"><?php echo $row['product_name']; ?></h3>
-                    <h2>$<?php echo $row['product_price']; ?></h2>
+                    <h2>P<?php echo $row['product_price']; ?></h2>
                     <input type="number" value="1">
                     <button class="add-to-cart-btn">Add to cart</button>
                     <h4 class="mt-3 mb-3">Product details</h4>

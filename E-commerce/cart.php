@@ -35,7 +35,7 @@
                         <img src="assets/imgs/brand1.jpg" alt="">
                         <div class="products-list">
                             <p>White crystal</p>
-                            <small><span>$</span>13.99</small>
+                            <small><span>P</span>13.99</small>
                             <br>
                             <a class="remove-tbn" href="#">Remove</a>
                         </div>
