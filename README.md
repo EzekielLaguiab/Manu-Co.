@@ -68,4 +68,4 @@ CREATE TABLE IF NOT EXISTS `orders` (
 
 ## Clone the repository
 
-git clone https://github.com/EzekielLaguiab/Projects/e-commerce.git
+git clone https://github.com/EzekielLaguiab/Projects/E-commerce.git
