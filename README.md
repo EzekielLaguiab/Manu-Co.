@@ -25,9 +25,10 @@
 
 The database consists of three main tables:
 
-### `order_items`
+## 'Database'
 This table stores the individual items in each order.
 
+### `order_items`
 ```sql
 CREATE TABLE IF NOT EXISTS `order_items` (
   `item_id` int(11) NOT NULL AUTO_INCREMENT,
@@ -38,19 +39,6 @@ CREATE TABLE IF NOT EXISTS `order_items` (
   `user_id` int(11) NOT NULL,
   `order_date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`item_id`)
-) ENGINE=InnoDB CHARSET=latin1;
-
-### `users`
-This table stores the individual items in each order.
-
-```sql
-CREATE TABLE IF NOT EXISTS `users` (
-  `user_id` int(11) NOT NULL AUTO_INCREMENT,
-  `user_name` varchar(108) NOT NULL,
-  `user_email` varchar(100) NOT NULL,
-  `user_password` varchar(100) NOT NULL,
-  PRIMARY KEY (`user_id`),
-  UNIQUE KEY `UX_Constraint` (`user_email`)
 ) ENGINE=InnoDB CHARSET=latin1;
 
 ### `users`
