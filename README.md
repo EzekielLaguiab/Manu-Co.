@@ -40,7 +40,9 @@ CREATE TABLE IF NOT EXISTS `order_items` (
   PRIMARY KEY (`item_id`)
 ) ENGINE=InnoDB CHARSET=latin1;
 
-###`users`
+### `users`
+This table stores the individual items in each order.
+
 ```sql
 CREATE TABLE IF NOT EXISTS `users` (
   `user_id` int(11) NOT NULL AUTO_INCREMENT,
