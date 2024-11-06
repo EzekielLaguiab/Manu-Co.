@@ -1,92 +1,248 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>E-Commerce</title>
-    <!-- main css -->
-    <link rel="stylesheet" href="assets/style.css">
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css" integrity="sha384-DyZ88mC6Up2uqS4h/KRgHuoeGwBcD4Ng9SiP4dIRy0EXTlnuz47vAwmeGwVChigm" crossorigin="anonymous"/>
-    <!-- Bootsrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+<?php
+session_start();
 
-</head>
-<body>
-    <!-- Nav bar -->
-    <?php include('header.php') ?>
+require 'server/connection.php';
 
-    <!-- account info -->
-     <section class="my-5 py-5">
-        <div class="row container mx-auto">
-            <div class="text-center mt-3 pt-5 col-lg-6 col-md-12 col-12">
-                <h2 class="font-weight-bold">Account info</h2>
-                <hr class="mx-auto">
-                <div class="account-info">
-                    <p>Name: <span>Zekie</span></p>
-                    <p>Email: <span>123@gmail.com</span></p>
-                    <p><a href="#" id="order-btn">Your orders</a></p>
-                    <p><a href="#" id="logout-btn">Logout</a></p>
-                </div>
+// Ensure the user is logged in
+if (!isset($_SESSION['logged_in'])) {
+    header('location: login.php');
+    exit;
+}
+
+// Handle logout
+if (isset($_GET['logout'])){
+    if(isset($_SESSION['logged_in'])){
+        unset($_SESSION['logged_in']);
+        unset($_SESSION['user_email']);
+        unset($_SESSION['first_name']);
+        unset($_SESSION['last_name']);
+        header('location: login.php');
+        exit;
+    }
+}
+
+// get orders
+if(isset($_SESSION['logged_in'])){
+
+    $user_id = $_SESSION['user_id'];
+
+    $results_per_page = 5; 
+    $page = isset($_GET['page']) ? (int)$_GET['page'] : 1; 
+    $start = ($page - 1) * $results_per_page;
+
+    // Fetch users with pagination
+    $result = $conn->prepare("SELECT * FROM orders WHERE user_id = ? LIMIT ?, ?");
+    $result->bind_param('iii', $user_id, $start, $results_per_page);
+    $result->execute();
+    $orders = $result->get_result();
+
+    // Get the total number of users for pagination
+    $count_query = $conn->prepare("SELECT COUNT(*) AS total FROM orders");
+    $count_query->execute();
+    $count_result = $count_query->get_result();
+    $row = $count_result->fetch_assoc();
+    $total_orders = $row['total'];
+    $total_pages = ceil($total_orders / $results_per_page);
+
+}
+
+
+// Handle password change
+if (isset($_POST['changePassword'])) {
+
+    $password = $_POST['password'];
+    $confirmpassword = $_POST['confirmPassword'];
+    $user_email = $_SESSION['user_email'];
+
+    // Ensure user email is set
+    if (!$user_email) {
+        header('location: account.php?error=User not logged in');
+        exit();
+    }
+
+    // If passwords don't match
+    if ($password !== $confirmpassword) {
+        header('location: account.php?error=Passwords don\'t match, please try again.');
+        exit();
+
+    // Password must be at least 6 characters
+    } else if (strlen($password) < 6) {
+        header('location: account.php?error=Password must be at least 6 characters.');
+        exit();
+
+    // If there is no error
+    } else {
+        // Hash the password before storing it
+        $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+
+        $result = $conn->prepare("UPDATE users SET user_password = ? WHERE user_email = ?");
+        $result->bind_param('ss', $hashedPassword, $user_email);
+
+        if ($result->execute()) {
+            header('location: account.php?message_update=Password has been updated successfully');
+            exit();
+        } else {
+            header('location: account.php?error=Could not update password.');
+            exit();
+        }
+    }
+}
+?>
+
+<!-- Nav bar -->
+<?php require 'header.php'; ?>
+
+       <!-- payment message -->
+       <?php if (isset($_GET['payment_status']) && $_GET['payment_status'] == 'success'): ?>
+            <script src="assets/sweetalert2@11.js"></script>
+            <script>
+                Swal.fire({
+                    icon: "success",
+                    title: "Paid successfully, thanks for shopping with us",
+                    confirmButtonColor: '#28a745'
+                });
+            </script>
+        <?php endif; ?>
+
+        <!-- log in message -->
+        <?php if (isset($_GET['message']) && $_GET['message'] == 'success'): ?>
+            <script src="assets/sweetalert2@11.js"></script>
+            <script>
+                Swal.fire({
+                    icon: "success",
+                    title: "Welcome Shoppers!",
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+            </script>
+        <?php endif; ?>
+
+        <!-- register success message -->
+        <?php if (isset($_GET['msg']) && $_GET['msg'] == 'register'): ?>
+            <script src="assets/sweetalert2@11.js"></script>
+            <script>
+                Swal.fire({
+                    icon: "success",
+                    title: "Welcome Shoppers!",
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+            </script>
+        <?php endif; ?>
+
+        <!-- register success message -->
+        <?php if (isset($_GET['msg']) && $_GET['msg'] == 'register'): ?>
+            <script src="assets/sweetalert2@11.js"></script>
+            <script>
+                Swal.fire({
+                    icon: "success",
+                    title: "Welcome Shoppers!",
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+            </script>
+        <?php endif; ?>
+
+        <?php if (isset($_GET['message']) && $_GET['message'] == 'Email already verified'): ?>
+            <script src="assets/sweetalert2@11.js"></script>
+            <script>
+                Swal.fire({
+                    icon: "info",
+                    title: "Email already verified!",
+                    showConfirmButton: false,
+                    timer: 2000
+                });
+            </script>
+        <?php endif; ?>
+
+
+ <!-- animate to show the content from the bottom -->
+<div style="display: none;" id="myDiv" class="animate-bottom"> 
+
+<!-- account info -->
+<section class="my-5 py-5">
+    <div class="row container mx-auto">
+        <div class="col-lg-6 col-md-12 col-12">
+            
+            
+            <h2 class="font-weight-bold">Account info</h2>
+            <hr class="">
+            <div class="account-info">
+                <p>Name: <span><?php if(isset($_SESSION['first_name'])){ echo $_SESSION['first_name']; } ?> <?php if(isset($_SESSION['last_name'])){ echo $_SESSION['last_name']; } ?></span></p>
+                <p>Email: <span><?php if(isset($_SESSION['user_email'])){ echo $_SESSION['user_email']; } ?></span></p>
+                <p>Phone: <span><?php if(isset($_SESSION['user_phone'])){ echo $_SESSION['user_phone']; } ?></span></p>
+                <p>Address: <span><?php if(isset($_SESSION['user_address'])){ echo $_SESSION['user_address']; } ?></span></p>
+                 
+                <p><a href="update_account.php" id="order-btn">Setings</a></p>
+                <p><a href="account.php?logout=1" id="logout-btn">Logout</a></p>
             </div>
-            <div class="col-lg-6 col-md-12 col-12">
-                <form action="" id="account-form">
-                    <h3>Change Password</h3>
+        </div>
+
+        <div class="col-lg-6 col-md-12 col-12">
+            <section id="orders" class="orders container ">
+                <div class="container">
+                    <h2 class="font-weight-bold text-center">Your Orders</h2>
                     <hr class="mx-auto">
-                    <div class="form-group">
-                        <label for="">Password</label>
-                        <input type="password" class="form-control" id="account-password" name="password" placeholder="Password" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="">Confirm Password</label>
-                        <input type="password" class="form-control" id="account-password-confirm" name="confirmPassword" placeholder="Password" required>
-                    </div>
-                    <div class="form-group">
-                        <input type="submit" name="" class="btn" id="change-pass-btn" value="Change Password">
-                    </div>
-                </form>
-            </div>
-        </div>
-
-     </section>
-
-
-     <!-- orders section -->
-     <section class="orders container my-5 py-3">
-        <div class="container mt-2">
-            <h2 class="font-weight-bold text-center">Your Orders</h2>
-            <hr class="mx-auto">
-        </div>
-
-        <table class="mt-5 pt-5">
-            <tr>
-                <th>Product</th>
-                <th>Date</th>
-            </tr>
-            <tr>
-                <td>
-                    <div class="product-info">
-                        <img src="assets/imgs/brand3.png" alt="">
-                        <p class="mt-3">Stone</p>
-                    </div>
-                </td>
-                <td>
-                    <p class="" id="orders-date">2024-9-25</p>
-                </td>
+                </div>
                 
-            </tr>
+                <table class="mt-3 pt-5">
+                    <tr>
+                        <th style="display: none;">Order ID</th>
+                        <th>Order Cost</th>
+                        <th>Status</th>
+                        <th>Date</th>
+                        <th>Order info</th>
+                    </tr>
 
-        </table>
+                    <?php while($row = $orders->fetch_assoc())  {?>
 
-     </section>
+                        <tr>
+                            <td style="display: none;">
+                                <span><?php echo $row['order_id'] ?></span>
+                            </td>
+                            <td>
+                                <span>$ <?php echo $row['order_cost'] ?></span>
+                            </td>
+                            <td>
+                                <span class="text-uppercase"><?php echo $row['order_status'] ?></span>
+                            </td>
+                            <td>
+                                <span id="orders-date"><?php echo $row['order_date'] ?> </span>
+                            </td>
+                            <td>
+                            <form action="order_details.php" method="POST">
+                                    <input type="hidden" value="<?php echo $row['order_status']; ?>" name="order_status">
+                                    <input type="hidden" value="<?php echo $row['order_id']; ?>" name="order_id">
+                                    <input id="buttons" class="btn btn-outline-success" type="submit" name="order-info" value="details">
+                                </form>
+                            </td>
+                        </tr>
 
-    <!-- footer -->
-    <?php include('footer.php'); ?>
-        
-        
-</body>
-<!-- main js -->
-<script src="assets/script.js"></script>
-<!-- bootstrap js -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-</html>
+                    <?php } ?>
+
+                </table>
+                
+                    <!-- Pagination -->
+                    <nav>
+                        <ul class="pagination justify-content-end mx-5">
+                            <?php if ($page > 1): ?>
+                                <li class="page-item"><a class="page-link" href="?page=<?php echo $page - 1; ?>">Previous</a></li>
+                            <?php endif; ?>
+
+                            <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+                                <li class="page-item <?php if ($i == $page) echo 'active'; ?>"><a class="page-link" href="?page=<?php echo $i; ?>"><?php echo $i; ?></a></li>
+                            <?php endfor; ?>
+
+                            <?php if ($page < $total_pages): ?>
+                                <li class="page-item"><a class="page-link" href="?page=<?php echo $page + 1; ?>">Next</a></li>
+                            <?php endif; ?>
+                        </ul>
+                    </nav>
+                    
+            </section>
+        </div>
+    </div>
+</section>
+
+<!-- footer -->
+<?php require 'footer.php'; ?>

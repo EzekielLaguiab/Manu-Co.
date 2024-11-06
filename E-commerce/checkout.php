@@ -1,23 +1,40 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>E-Commerce</title>
-    <!-- main css -->
-    <link rel="stylesheet" href="assets/style.css">
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css" integrity="sha384-DyZ88mC6Up2uqS4h/KRgHuoeGwBcD4Ng9SiP4dIRy0EXTlnuz47vAwmeGwVChigm" crossorigin="anonymous"/>
-    <!-- Bootsrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+<?php
 
-</head>
-<body>
+session_start();
+require 'server/connection.php';
+
+if (!isset($_SESSION['logged_in'])) {
+    header('location: cart.php?msg=error');
+    exit;
+
+}
+
+if(!empty($_SESSION['cart'])){
+
+}else{
+    
+    header('location: index.php');
+
+}
+
+if(isset($_SESSION['logged_in'])){
+
+    $user_id = $_SESSION['user_id'];
+
+    $result = $conn->prepare("SELECT * FROM users WHERE user_id = ?");
+    $result->bind_param('i', $user_id );
+    $result->execute();
+}
+
+?>
     <!-- Nav bar -->
-    <?php include('header.php') ?>
+    <?php require ('header.php') ?>
+    
+     <!-- animate to show the content from the bottom -->
+    <div style="display: none;" id="myDiv" class="animate-bottom"> 
 
     <!-- checkout -->
-    <section class="my-5 py-5">
+    <section class="my-4 py-5">
         <div class="container text-center mt-4 py-4">
             <div>
                 <h2 class="form-weight-bold">Check Out</h2>
@@ -25,25 +42,28 @@
             </div>
 
             <div class="mx-auto container">
-                <form id="checkout-form" action="">
+                <form id="checkout-form" method="post" action="place_order.php">
+                    <p>Note: If you want to change or update go back to account settings, thanks!</p>
+                        
                     <div class="form-group checkout-small-element">
                         <label for="name">Name</label>
-                        <input type="text" class="form-control" id="checkout-name" name="name" placeholder="Name" required>
+                        <input type="text" class="form-control" id="checkout-name" name="name" readonly value="<?php if(isset($_SESSION['first_name'])){ echo $_SESSION['first_name']; } ?> <?php if(isset($_SESSION['last_name'])){ echo $_SESSION['last_name']; } ?>" placeholder="" required>
                     </div>
                     <div class="form-group checkout-small-element">
                         <label for="email">Email</label>
-                        <input type="email" class="form-control" id="checkout-email" name="email" placeholder="Email" required>
+                        <input type="email" class="form-control" id="checkout-email" name="email" readonly value="<?php if(isset($_SESSION['user_email'])){ echo $_SESSION['user_email']; } ?>" placeholder="" required>
                     </div>
                     <div class="form-group checkout-small-element">
-                        <label for="phone">Phone</label>
-                        <input type="tel" class="form-control" id="checkout-phone" name="phone" placeholder="Phone" required>
+                        <label for="phone">Phone Number</label>
+                        <input type="tel" class="form-control" id="checkout-phone" name="phone" readonly value="<?php if(isset($_SESSION['user_phone'])){ echo $_SESSION['user_phone']; } ?>" placeholder="" required>
                     </div>
                     <div class="form-group checkout-small-element">
                         <label for="address">Complete Address</label>
-                        <input type="text" class="form-control" id="checkout-address" name="address" placeholder="Complete Address" required>
+                        <input type="text" class="form-control" id="checkout-address" name="address" readonly value="<?php if(isset($_SESSION['user_address'])){ echo $_SESSION['user_address']; } ?>" placeholder="" required>
                     </div>
                     <div class="form-group checkout-btn-container">
-                        <input type="submit" class="btn" id="checkout-btn" value="Checkout"/>
+                        <p>Total amount: $ <?php echo $_SESSION['cart_total']; ?></p>
+                        <input type="submit" class="btn" id="checkout-btn" name="place-order" value="Place order"/>
                     </div>
 
                 </form>
@@ -57,10 +77,3 @@
     <!-- footer -->
     <?php include('footer.php'); ?>
         
-        
-</body>
-<!-- main js -->
-<script src="assets/script.js"></script>
-<!-- bootstrap js -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-</html>

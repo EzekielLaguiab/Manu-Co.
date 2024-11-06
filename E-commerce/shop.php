@@ -1,110 +1,91 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>E-Commerce</title>
-    <!-- main css -->
-    
-    <link rel="stylesheet" href="assets/style.css">
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css" integrity="sha384-DyZ88mC6Up2uqS4h/KRgHuoeGwBcD4Ng9SiP4dIRy0EXTlnuz47vAwmeGwVChigm" crossorigin="anonymous"/>
-    <!-- Bootsrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 
-    <style>
-        /* .image-container {
-            position: relative;
-            width: 70%;
-            padding-top: 70%; 
-            overflow: hidden;
-        }
-        .image-container img {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            object-position: center; 
-        } */
+<?php
 
-        #image{
-            width: auto;
-            height: 200px;
-            box-sizing: border-box;
-            object-fit: cover;
-            object-position: center;
+session_start(); // Start session
 
-        }
-        .pagination a{
-            color: black;
-        }
-        .pagination li:hover a{
-            background-color: orange;
-            color: white;
-        }
-    </style>
+include 'server/connection.php';
 
-</head>
-<body>
-    <!-- Nav bar -->
-    <?php include('header.php') ?>
+// Define the number of results per page
+$results_per_page = 12; 
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1; 
+$start = ($page - 1) * $results_per_page;
 
-        <!-- featured -->
-        <section id="featured" class="my-5 pb-5 container">
-        <div class="container-fluid mt-5 py-5 ">
-          <h3>Products</h3>
-          <hr class="">
-          <p>Hot and latest products</p>
-        </div>
+// Fetch products with pagination
+$result = $conn->prepare("SELECT * FROM products LIMIT ?, ?");
+$result->bind_param('ii', $start, $results_per_page);
+$result->execute();
+$products = $result->get_result();
 
-        <div class="row mx-auto container-fluid">  
-          
+// Get the total number of products for pagination
+$count_query = $conn->prepare("SELECT COUNT(*) AS total FROM products");
+$count_query->execute();
+$count_result = $count_query->get_result();
+$row = $count_result->fetch_assoc();
+$total_products = $row['total'];
+$total_pages = ceil($total_products / $results_per_page);
+
+?>
+
+<!-- Nav bar -->
+<?php include('header.php') ?>
+
+ <!-- animate to show the content from the bottom -->
+<div style="display: none;" id="myDiv" class="animate-bottom"> 
+
+<style>
+    h3{
+        color: #2E7D32;
+    }
+</style>
+
+    <!-- featured -->
+<section id="featured" class="my-4 py-5 container-fluid">
         
-            <?php
-                include 'assets/server/connection.php';
+    <div class="container">
 
-                $sql = "SELECT * FROM products";
-                $result = $conn->query(query: $sql);
-
-            ?>
-
-            <?php while($row = $result->fetch_assoc()) { ?>
-                
-                <div  class="product text-center col-lg-3 col-md-4 col-6">
-                    <div class="image-container container">
-                        
-                        <img style="width: auto; height: 200px; box-sizing: border-box; object-fit: cover;" 
-                        id="image" class="img-fluid  mb-3" src="assets/IMAGES/<?php echo $row ['product_image']; ?>" alt="">
-                        <a href="<?php echo "single_product.php?product_id=" . $row['product_id'];?>">  
-                            <button class="buy-btn">Buy now</button>
-                        </a>
-                    </div>
-                    <div class="star">
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                    </div>
-                    <h5 class="p-name"><?php echo $row ['product_name']; ?></h5>
-                    <h4 class="p-price">P<?php echo $row ['product_price']; ?></h4>
-                    
-                </div>
-
-            <?php } ?>
+        <div class="mt-4">
+            <h3>Products</h3>
+            <hr>
+            <p>Hot and latest products</p>
         </div>
 
-      </section>
+        <div class="row d-flex justify-content-center"> 
+                <?php while($row = $products->fetch_assoc()) { ?>
+                    <div class="product text-center col-lg-3 col-md-4 col-6 mb-5 ">
+                            <div class="image-container">
+                                <img id="image" class="img-fluid  mb-3" src="assets/IMAGES/<?php echo $row ['product_image']; ?>" alt="">
+                            </div>
+                            <h5 class="p-name"><?php echo $row ['product_name']; ?></h5>
+                            <h4 class="p-price">$<?php echo $row ['product_price']; ?></h4>
+
+                            <a href="<?php echo "single_product.php?product_id=" . $row['product_id'];?>">  
+                                    <button class="buy-btn">Buy now</button>
+                            </a>
+                    </div>
+                <?php } ?>
+            </div>
+
+            <!-- Pagination -->
+            <nav>
+                <ul class="pagination justify-content-start mx-5">
+                    <?php if ($page > 1): ?>
+                        <li class="page-item"><a class="page-link" href="?page=<?php echo $page - 1; ?>">Previous</a></li>
+                    <?php endif; ?>
+
+                    <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+                        <li class="page-item <?php if ($i == $page) echo 'active'; ?>"><a class="page-link" href="?page=<?php echo $i; ?>"><?php echo $i; ?></a></li>
+                    <?php endfor; ?>
+
+                    <?php if ($page < $total_pages): ?>
+                        <li class="page-item"><a class="page-link" href="?page=<?php echo $page + 1; ?>">Next</a></li>
+                    <?php endif; ?>
+                </ul>
+            </nav>
+    </div>
+</section>
+
+
+
 
     <!-- footer -->
     <?php include('footer.php'); ?>
-
-</body>
-
-<!-- main js -->
-<script src="assets/script.js"></script>
-<!-- bootstrap js -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-</html>
