@@ -129,57 +129,11 @@ $order_id = null;
                 var transaction = orderData.purchase_units[0].payments.captures[0];
                 alert('transaction' + transaction.status + ': ' + transaction.id + '\n\n');
 
-                window.location.href = "server/complete_payment.php?transaction_id=" + transaction.id + "&order_id=" + <?php echo $order_id; ?>;
+                window.location.href = "server/complete_payment.php?transaction_id=" + transaction.id + "&order_id=" + <?php echo $order_id; ?> + "&amount=" + <?php echo $amount; ?>;
             });
         }
     }).render('#paypal-button-container');
 </script>
-
-<!-- G-cash payment using paymongo -->
-
-<!-- <?php 
-if (isset($_POST['pay-now'])) {
-
-    require_once('vendor/autoload.php'); 
-
-    $client = new \GuzzleHttp\Client();
-
-    $amount = $amount * 100;
-
-    try {
-        $response = $client->request('POST', 'https://api.paymongo.com/v1/links', [
-            'body' => json_encode([
-                'data' => [
-                    'attributes' => [
-                        'amount' => $amount,  
-                        'description' => 'Manu & Co.',  
-                        'remarks' => 'payment'  
-                    ]
-                ]
-            ]),
-            'headers' => [
-                'accept' => 'application/json',
-                'content-type' => 'application/json',
-                'authorization' => 'Basic ' . base64_encode('sk_test_NiNUuS8Yw6Yj4o9mzBR6rneE:') 
-            ]
-        ]);
-
-        $responseBody = json_decode($response->getBody(), true);
-
-        
-        if (isset($responseBody['data']['attributes']['checkout_url'])) {
-            header("Location: " . $responseBody['data']['attributes']['checkout_url']);
-            exit;
-        }
-
-    } catch (Exception $e) {
-        
-        echo 'Payment failed: ' . $e->getMessage();
-    }
-}
-
-?> -->
-
 
 <!-- footer -->
 <?php include('footer.php'); ?>

@@ -63,7 +63,7 @@ $total_pages = ceil($total_order_items / $results_per_page);
                                         <td><?php echo $row['product_name']; ?></td>
                                         <td><img src="<?php echo "../assets/IMAGES/". $row ['product_image']; ?>" style="width: 70px; height: 70px;"></td>
                                         <td><?php echo $row['wrist_size']; ?></td>
-                                        <td><?php echo $row['product_price']; ?></td>
+                                        <td>$<?php echo $row['product_price']; ?></td>
                                         <td><?php echo $row['product_quantity']; ?></td>
                                         <td><?php echo $row['order_date']; ?></td>
 

@@ -46,6 +46,7 @@ $total_pages = ceil($total_payment / $results_per_page);
                                         <th>Payment ID</th>
                                         <th>User ID</th>
                                         <th>Transaction ID</th>
+                                        <th>Amount</th>
                                         <th>Payment Date</th>
                                     </tr>
                                 </thead>
@@ -56,6 +57,7 @@ $total_pages = ceil($total_payment / $results_per_page);
                                         <td><?php echo $row['payment_id']; ?></td>
                                         <td><?php echo $row['user_id']; ?></td>
                                         <td><?php echo $row['transaction_id']; ?></td>
+                                        <td>$<?php echo $row['amount']; ?></td>
                                         <td><?php echo $row['payment_date']; ?></td>
 
                                     </tr>

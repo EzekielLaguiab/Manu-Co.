@@ -96,30 +96,27 @@ $results1 = $conn->query(query: $sql);
 
       <!-- hom section -->
        
-      <section id="home" class="container mt-5 pt-5 text-center text-md-start ">
+      <section id="home" class="container my-5 py-5 text-center text-md-start ">
           <div class="container">
-          <div class="row align-items-center  ">
-              
-              <!-- Text Section -->
-              <div id="home-text-section" class="col-md-6 mb-4 mb-md-0">
-                  <h4 class="fw-bold">WELCOME TO MANU'S CRAFT SHOP!</h4>
-                  <hr class="w-25 mx-auto mx-md-0 mb-4">
-                  <h1 class="display-5"><span>Best Prices</span> on Beautiful Bracelets</h1>
-                  <p class="lead">
-                      Discover our curated collection of stone and crystal bracelets, designed for elegance and balance.
-                      Each piece showcases the natural beauty and unique energy of carefully selected stones.
-                  </p>
-                  <p>
-                      Perfect for any occasion, our bracelets are crafted with quality and intention to inspire and uplift. Find the one that speaks to you today.
-                  </p>
-                  <a href="shop.php" class="btn mt-3" id="buttons2">Shop Now</a>
-              </div>
-              
-              <!-- Image Section -->
-              <div id="home-section" class="col-md-6 d-flex justify-content-center">
-                  <img src="assets/IMAGES/p1.jpg" alt="Beautiful stone bracelets displayed" class="img-fluid rounded shadow">
-              </div>
-          </div>
+            <div class="row align-items-center mt-5 ">
+                
+                <!-- Text Section -->
+                <div id="home-text-section" class="col-md-6 mb-4 mb-md-0">
+                    <h4 class="fw-bold">WELCOME TO MANU'S CRAFT SHOP!</h4>
+                    <hr class="w-25 mx-auto mx-md-0 mb-4">
+                    <h1 class="display-5"><span>Best Prices</span> on Beautiful Bracelets</h1>
+                    <p class="lead">
+                        Discover our curated collection of stone and crystal bracelets, designed for elegance and balance.
+                        Each piece showcases the natural beauty and unique energy of carefully selected stones.
+                    </p>
+                    <a href="shop.php" class="btn mt-3" id="buttons2">Shop Now</a>
+                </div>
+                
+                <!-- Image Section -->
+                <div id="home-section" class="col-md-6 d-flex justify-content-center">
+                    <img src="assets/IMAGES/p1.jpg" alt="Beautiful stone bracelets displayed" class="img-fluid rounded shadow">
+                </div>
+            </div>
           </div>
       </section>
 

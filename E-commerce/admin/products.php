@@ -61,7 +61,7 @@ $total_pages = ceil($total_products / $results_per_page);
                                         <td width=1% style="white-space: nowrap"><?php echo $row['product_name']; ?></td>
                                         <td width=1% style="white-space: nowrap"><img src="<?php echo "../assets/IMAGES/". $row ['product_image']; ?>" style="width: 70px; height: 70px;"></td>
                                         <td width=1% style="white-space: nowrap"><textarea cols="50" rows="4" readonly><?php echo $row['product_description']; ?></textarea></td>
-                                        <td width=1% style="white-space: nowrap"><?php echo $row['product_price']; ?></td>
+                                        <td width=1% style="white-space: nowrap">$<?php echo $row['product_price']; ?></td>
 
                                         <td width=1% style="white-space: nowrap">
                                                 <div class="btn-group">

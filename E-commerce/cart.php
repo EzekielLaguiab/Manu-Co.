@@ -137,7 +137,6 @@ function calculateTotalCart(){
             <script src="assets/sweetalert2@11.js"></script>
             <script>
                 Swal.fire({
-                    
                     icon: "error",
                     title: "Oops...",
                     text: "Log in or register first to check out!",

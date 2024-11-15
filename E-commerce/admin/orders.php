@@ -65,7 +65,7 @@ $total_pages = ceil($total_orders / $results_per_page);
                                             <!-- <td><?php echo $row['first_name'];?> <?php echo $row['last_name']; ?></td> -->
                                             <td><?php echo $row['user_phone']; ?></td>
                                             <td><?php echo $row['user_address']; ?></td>
-                                            <td><?php echo $row['order_cost']; ?></td>
+                                            <td>$<?php echo $row['order_cost']; ?></td>
                                             <td><?php echo $row['order_date']; ?></td>
                                             <td><?php echo $row['order_status']; ?></td>
 
